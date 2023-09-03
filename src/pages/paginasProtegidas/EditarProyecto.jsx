@@ -6,6 +6,7 @@ import { useProyectos } from "../../context/ProyectosProvider"
 export const EditarProyecto = () => {
     const { id } = useParams()
     const { obtenerProyecto, proyecto, cargando } = useProyectos()
+
     useEffect(() => {
         obtenerProyecto(id)
     }, [])

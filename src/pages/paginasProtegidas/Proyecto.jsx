@@ -6,9 +6,7 @@ export const Proyecto = () => {
 
     const { id } = useParams()
     const navigate = useNavigate()
-    const { proyecto, cargando, eliminarProyecto } = useProyectos()
-
-
+    const { proyecto, cargando, eliminarProyecto, obtenerProyecto } = useProyectos()
 
     const handleClick = async () => {
 
@@ -16,10 +14,12 @@ export const Proyecto = () => {
             await eliminarProyecto(id)
             navigate('/proyectos')
 
-        } else {
-            console.log('no elimina')
         }
     }
+
+    useEffect(() => {
+        obtenerProyecto(id)
+    }, [])
 
     if (cargando) return (<Spinner />)
 

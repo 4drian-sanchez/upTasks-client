@@ -107,6 +107,7 @@ const ProyectosProvider = ({ children }) => {
                 }
             }
             const { data } = await clienteAxios(`/proyectos/${id}`, config)
+            console.log(data)
             setProyecto(data)
         } catch (error) {
             console.log(error)
