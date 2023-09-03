@@ -1,5 +1,6 @@
 import { useState, createContext, useContext, useEffect } from "react";
 import clienteAxios from '../config/clienteAxios'
+import { useAuth } from "./AuthContext";
 
 const ProyectosContext = createContext()
 export const useProyectos = () => useContext(ProyectosContext)
@@ -11,33 +12,29 @@ const ProyectosProvider = ({ children }) => {
     const [cargando, setCargando] = useState(false)
     const [alerta, setAlerta] = useState({ msg: '', error: false })
     const mostrarAlerta = alerta => setAlerta(alerta)
-
+    const { auth } = useAuth()
 
     useEffect(() => {
-
         const obtenerProyectos = async () => {
-
-            setCargando(true)
-            const token = localStorage.getItem('TOKEN')
-            if (!token) return
-            const config = {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
-                }
-            }
-
             try {
+                const token = localStorage.getItem('TOKEN')
+                if (!token) return
+
+
+                const config = {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    }
+                }
                 const { data } = await clienteAxios('/proyectos', config)
                 setProyectos(data)
             } catch (error) {
-                console.log(error.response.data.msg)
-            } finally {
-                setCargando(false)
+                console.log(error)
             }
         }
         obtenerProyectos()
-    }, [])
+    }, [auth])
 
     const nuevoProyecto = async proyecto => {
         try {
@@ -86,15 +83,9 @@ const ProyectosProvider = ({ children }) => {
         }
     }
 
-    const submitProyecto = async proyecto => {
-        if (proyecto.id) {
-            await editarProyecto(proyecto)
-        } else {
-            await nuevoProyecto(proyecto)
-        }
-    }
-    /* proyecto.id ? await editarProyecto(proyecto) : await nuevoProyecto(proyecto) */
-
+    //Aqui validamos con un ternario si existe el id para editar con crear un proyecto nuevo
+    const submitProyecto = async proyecto =>
+        proyecto.id ? await editarProyecto(proyecto) : await nuevoProyecto(proyecto)
 
     const obtenerProyecto = async id => {
         setCargando(true)

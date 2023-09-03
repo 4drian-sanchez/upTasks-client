@@ -23,9 +23,9 @@ export const Login = () => {
         try {
             const { data } = await clienteAxios.post('/usuarios/login', { email, password })
             const { token } = await data
+            setAlerta({})
             localStorage.setItem('TOKEN', token)
             setAuth(data)
-            setAlerta({})
             navigate('/proyectos')
         } catch (error) {
             setAlerta({
