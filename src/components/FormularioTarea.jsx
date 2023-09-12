@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useProyectos } from '../context/ProyectosProvider'
 import { Alerta } from './Alerta'
@@ -6,11 +6,11 @@ import { Alerta } from './Alerta'
 const FormularioTarea = () => {
 
     const { id: proyecto } = useParams()
-    const initialState = { nombre: '', descripcion: '', prioridad: '', proyecto, fechaEntrega: '' }
-    const [tarea, setTarea] = useState(initialState)
+    
+    const tareaInitialState = { nombre: '', descripcion: '', prioridad: '', proyecto, fechaEntrega: '' }
+    const [tarea, setTarea] = useState(tareaInitialState)
     const PRIORIDAD = ["Baja", "Media", "Alta"]
-    const { mostrarAlerta, alerta, submitTarea } = useProyectos()
-
+    const { mostrarAlerta, alerta, submitTarea, tarea: tareaProvider } = useProyectos()
 
     const handleSubmit = e => {
         e.preventDefault()
@@ -19,10 +19,31 @@ const FormularioTarea = () => {
             msg: 'Todos los campos son obligatorios',
             error: true
         })
-        mostrarAlerta({})
         submitTarea(tarea)
+        mostrarAlerta({})
 
     }
+
+    useEffect(() => {
+        const { nombre, descripcion, prioridad, fechaEntrega, _id } = tareaProvider
+        
+        if (tareaProvider?._id) {
+            setTarea({
+                idTarea: _id,
+                nombre,
+                descripcion,
+                prioridad,
+                proyecto,
+                fechaEntrega: fechaEntrega?.split('T')[0]
+            })
+            return
+        }
+
+        setTimeout(() => {
+            setTarea(tareaInitialState)
+        }, 2000);
+
+    }, [tareaProvider])
 
     return (
         <>
@@ -73,7 +94,7 @@ const FormularioTarea = () => {
                         id='fechaEntrega'
                         className='p-2 w-full placeholder:text-gray-400 outline-none rounded border'
                         name='fechaEntrega'
-                        value={tarea.fecha}
+                        value={tarea.fechaEntrega}
                         onChange={e => {
                             setTarea({
                                 ...tarea,
@@ -108,7 +129,7 @@ const FormularioTarea = () => {
                 <input
                     className='mt-3 w-full bg-sky-500 hover:bg-sky-700 transition-colors p-3 rounded-md text-white text-sm font-bold uppercase cursor-pointer'
                     type="submit"
-                    value="Crear tarea"
+                    value={tarea?.idTarea ? "Guardar cambios" : "Crear tarea"}
                 />
 
             </form>

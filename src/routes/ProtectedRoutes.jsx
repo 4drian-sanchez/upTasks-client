@@ -1,4 +1,5 @@
 import { CrearProyecto, Proyectos, Proyecto, EditarProyecto } from "../pages/paginasProtegidas";
+import { NuevoColaborador } from "../pages/paginasProtegidas/nuevoColaborador";
 
 export const ProtectedRoutes = () => {
     return [
@@ -17,6 +18,10 @@ export const ProtectedRoutes = () => {
         {
             path: "/proyectos/editar/:id",
             element: <EditarProyecto />,
+        },
+        {
+            path: "/proyectos/nuevo-colaborador/:id",
+            element: <NuevoColaborador />,
         },
     ]
 }

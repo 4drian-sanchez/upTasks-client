@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment, useEffect } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { useProyectos } from '../context/ProyectosProvider'
 import FormularioTarea from './FormularioTarea'
@@ -6,11 +6,14 @@ import FormularioTarea from './FormularioTarea'
 
 export const ModalFormularioTarea = () => {
 
-    const { handleMondalTarea, modalFormularoTarea } = useProyectos()
+    const { handleMondalTarea, modalFormularoTarea, mostrarAlerta, tarea } = useProyectos()
 
     return (
         <Transition.Root show={modalFormularoTarea} as={Fragment}>
-            <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" onClose={handleMondalTarea}>
+            <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" onClose={() => {
+                handleMondalTarea()
+                mostrarAlerta({ msg: '', error: false })
+            }}>
                 <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                     <Transition.Child
                         as={Fragment}
@@ -47,7 +50,10 @@ export const ModalFormularioTarea = () => {
                                 <button
                                     type="button"
                                     className="bg-white rounded-md text-gray-400 hover:text-gray-500 "
-                                    onClick={handleMondalTarea}
+                                    onClick={() => {
+                                        handleMondalTarea()
+                                        mostrarAlerta({ msg: '', error: false })
+                                    }}
                                 >
                                     <span className="sr-only">Cerrar</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
@@ -60,7 +66,7 @@ export const ModalFormularioTarea = () => {
                             <div className="sm:flex sm:items-start">
                                 <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                                     <Dialog.Title as="h2" className="text-xl leading-6 font-bold text-gray-700 uppercase">
-                                        Nueva Tarea
+                                        {tarea?._id ? 'Editar tarea' : 'Nueva Tarea'}
                                     </Dialog.Title>
                                     <FormularioTarea />
                                 </div>
